@@ -1,180 +1,156 @@
-
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <meta http-equiv="X-UA-Compatible"
-        content="ie=edge">
-  <title>Document</title>
-  <style>
-    #center {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      /* bring your own prefixes */
-      transform: translate(-50%, -50%);
-      text-align: center;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible"
+          content="ie=edge">
+    <title>Document</title>
+    <style>
+        #center {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            /* bring your own prefixes */
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
 
-    #coords {
-      font-family: monospace;
-      font-size: 40px;
-      font-weight: bold;
-    }
+        #coords {
+            font-family: monospace;
+            font-size: 40px;
+            font-weight: bold;
+        }
 
-    #loader {
-      display: inline-block;
-    }
-  </style>
+        #loader {
+            display: inline-block;
+        }
 
-  <style>
-    [data-loader='satellite'] {
-      position: relative;
+        .hint {
+            display: inline-block;
+            text-align: center;
+            width: 35px;
+        }
 
-      width: 48px;
-      height: 48px;
+        .hint-lat, .hint-lng {
+            display: inline-block;
+            padding: 15px 45px;
+        }
 
-      animation: satellite 3s infinite linear;
+        .dot {
+            height: 25px;
+            width: 25px;
+            background-color: #FF4136;
+            border-radius: 50%;
+            display: inline-block;
+        }
 
-      border: 1px solid #000;
-      border-radius: 100%;
-    }
+        .dot-green {
+            background-color: #2ECC40;
+        }
 
-    [data-loader='satellite']:before,
-    [data-loader='satellite']:after {
-      position: absolute;
-      left: 0;
+        .dot-yellow {
+            background-color: #FFDC00;
+        }
 
-      width: 15px;
-      height: 15px;
-
-      content: '';
-
-      border-radius: 100%;
-      background-color: #000;
-      -webkit-box-shadow: 0 0 10px #000;
-      box-shadow: 0 0 10px #000;
-    }
-
-    [data-loader='satellite']:after {
-      right: 0;
-
-      width: 24px;
-      height: 24px;
-      margin: 12px;
-    }
-
-    @-webkit-keyframes satellite {
-      from {
-        -webkit-transform: rotate(0) translateZ(0);
-        -ms-transform: rotate(0) translateZ(0);
-        -o-transform: rotate(0) translateZ(0);
-        transform: rotate(0) translateZ(0);
-      }
-      to {
-        -webkit-transform: rotate(360deg) translateZ(0);
-        -ms-transform: rotate(360deg) translateZ(0);
-        -o-transform: rotate(360deg) translateZ(0);
-        transform: rotate(360deg) translateZ(0);
-      }
-    }
-
-    @-moz-keyframes satellite {
-      from {
-        -webkit-transform: rotate(0) translateZ(0);
-        -ms-transform: rotate(0) translateZ(0);
-        -o-transform: rotate(0) translateZ(0);
-        transform: rotate(0) translateZ(0);
-      }
-      to {
-        -webkit-transform: rotate(360deg) translateZ(0);
-        -ms-transform: rotate(360deg) translateZ(0);
-        -o-transform: rotate(360deg) translateZ(0);
-        transform: rotate(360deg) translateZ(0);
-      }
-    }
-
-    @-o-keyframes satellite {
-      from {
-        -webkit-transform: rotate(0) translateZ(0);
-        -ms-transform: rotate(0) translateZ(0);
-        -o-transform: rotate(0) translateZ(0);
-        transform: rotate(0) translateZ(0);
-      }
-      to {
-        -webkit-transform: rotate(360deg) translateZ(0);
-        -ms-transform: rotate(360deg) translateZ(0);
-        -o-transform: rotate(360deg) translateZ(0);
-        transform: rotate(360deg) translateZ(0);
-      }
-    }
-
-    @keyframes satellite {
-      from {
-        -webkit-transform: rotate(0) translateZ(0);
-        -ms-transform: rotate(0) translateZ(0);
-        -o-transform: rotate(0) translateZ(0);
-        transform: rotate(0) translateZ(0);
-      }
-      to {
-        -webkit-transform: rotate(360deg) translateZ(0);
-        -ms-transform: rotate(360deg) translateZ(0);
-        -o-transform: rotate(360deg) translateZ(0);
-        transform: rotate(360deg) translateZ(0);
-      }
-    }
-  </style>
+        .simple {
+            font-size: 20px;
+            font-weight: 200;
+            letter-spacing: 1px;
+            padding: 13px 20px;
+            outline: 0;
+            border: 1px solid black;
+            cursor: pointer;
+            position: relative;
+            background-color: #7FDBFF;
+        }
+    </style>
 </head>
 <body>
 <div id="center">
-  <div id="coords"></div>
-  <div class="hints"></div>
-  <div id="loader" data-loader="satellite"></div>
+    <div id="coords">{{ coordsDisplay }}</div>
+    <div class="hints">
+        <!-- @formatter:off -->
+        <div class="hint-lat">
+            <div class="hint" v-for="(hint, index) in hintsLat" :key="index">
+                <div :class="['dot', {'dot-green': hint === 1, 'dot-yellow': hint === 0}]"></div>
+            </div>
+        </div>
+        <div class="hint-lng">
+            <div class="hint" v-for="(hint, index) in hintsLng" :key="index">
+                <div :class="['dot', {'dot-green': hint === 1, 'dot-yellow': hint === 0}]"></div>
+            </div>
+        </div>
+    </div>
+    <button type="button" class="simple">
+        <img src="data:image/jpeg;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAArCAYAAAADgWq5AAADuElEQVRYR8WYTWgTURDHZxJjWqGK1ltL1kCPogUvfuBBEUHabFEoiuJBkJx7stnWQ0Dppl568CwUQcGCSDZVKaL0IAUvfhw8iKLZpWIRFalFGtvsky1u3Gzf7s6+7aY5JWTem9/89/9mXoKwSS9JHjkGwJ5Z6XVNRSoGOZC6ISUuk1MuIsJtZywVuuXA2VzhpIk4wyuMAt1S4Exf4QQm8YnfUwiCbhmw1K8cggTMUSzjB90S4G650JMEfE+BtWO8oGMHzp4e3m/WE6/DwPpBxwucz6ekhc4/IrBraxAv6OWxu871sQFnz4xK5qpZFYYFAMZw0qiMXYofuFhMSC9r9SiwXgMlFoUlWWFxwK65JOrGvPVRgTe8rUmy8goAev1Osyj0hg8OSVYsbyb4T4YxXSs1vgsLHQQrZAkqhJ08bHyQRUN7mAoQlFjkpharwm4gr0IpNojUh6WcMg8IXSIKuqHDwgopbC0SsYUN190/2pVM1Kd0rXQkTNF2bGgPiwJ7Ta6w0KLATwHgeIhkTNdUZ7urAcBW93pENlktl5ruDutiqEkzsmIYmpqx46m2cPpUZI0QsDNRvbbcOT8z8YNijUYvzo2cAmSPqOJEGs08VVjK3GvcH3/rp5hjcJiUOwsDNoeAh4O87uth6iN0KxdmyvEsI6QwFdYNx4AtGVqpQxpQ7gCD83424MEy0zxqTI8/91rHVZgKa226moTdnx+o321PE9Vd0jW1o3GAc8pHQMgG2YE7OMLA2gmzi+nU7GxxldZB8KGujfU7FbRzUiZfk8IisHZiSvtijN0zKqVzVh5cTLdXZ4vLjiJ/65q6LaiTNICjwFpJ2qC+/Z1245fnPshW9HJpa0ZWfiLADsrj58GvAUeFdSan3MqcMRQbOMFxI2G9iudBufIauqZKNtgeWfn67/1CVVP3OWMjA7thwlwhM7nhCcTEkPsc2HskzC29n6avvWnsyaAWyRIE5Zr+rLYS+xXobonuz/VaulP40Hl5j+fPINUlefiqro1fd1uKV4BQW/M7KH5nAhEOVsvqC6/WFVSslXfdpAs6hEGn+kA+n/rG+QPQb112YDhnsoTWKITBLb2iXnYqbq8PNZqDYO2Emb7CTkzCF10rtfkOgsHBpFTraUxIKza1stT24fFN64Lf1G59gXntiQobNKmavncAI4OpakU9yxvvztyk62UssB6VSbLSdH925xb6TRdKRUJwJndlCDE54Q7lCbW5wBwPW9C4K91enfx/MWoazQQB4gtxAVOs9xfuhuXy9rP9VAAAAABJRU5ErkJggg=="
+             alt="">
+    </button>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
 <script>
-  const coords = document.querySelector('#coords');
-  const zeroPad = (num, places) => String(num).padStart(places, '0')
 
-  function ConvertDDToDMS(D, lng) {
-    const M = 0 | (D % 1) * 60e7;
+    function ConvertDDToDMS(D, lng) {
+        const M = 0 | (D % 1) * 60e7;
 
-    return {
-      dir: D < 0 ? lng ? 'W' : 'S' : lng ? 'E' : 'N',
-      deg: 0 | (D < 0 ? D = -D : D),
-      min: 0 | M / 1e7,
-      sec: (0 | M / 1e6 % 1 * 6e4) / 100
-    };
-  }
+        return {
+            dir: D < 0 ? lng ? 'W' : 'S' : lng ? 'E' : 'N',
+            deg: 0 | (D < 0 ? D = -D : D),
+            min: 0 | M / 1e7,
+            sec: (0 | M / 1e6 % 1 * 6e4) / 100
+        };
+    }
 
-  function formatCoords(coord) {
-    return `${coord.dir} ${zeroPad(coord.deg, 2)}° ${zeroPad(coord.min, 2)}.${zeroPad(Math.round(coord.sec), 3)}'`
-  }
+    const zeroPad = (num, places) => String(num).padStart(places, '0');
 
-  function success(position) {
-    const coordinates = position.coords;
-    const lat = ConvertDDToDMS(coordinates.latitude, false);
-    const lng = ConvertDDToDMS(coordinates.longitude, true);
-    // N 49° 58.551' E 019° 46.976'
-    console.log(lat, lng);
-    coords.textContent = `${formatCoords(lat)} ${formatCoords(lng)}`;
-  }
+    var app = new Vue({
+        el: '#center',
+        data: {
+            hintsLat: [1, 1, 0, null, null, null, null],
+            hintsLng: [1, 1, 0, null, null, null, null],
+            coords: undefined,
+            unsupported: false,
+            disallowed: false,
+        },
+        mounted() {
+            if (!navigator.geolocation) {
+                this.unsupported = true;
+            } else {
+                this.getLocation();
+            }
+        },
+        methods: {
+            getLocation() {
+                navigator.geolocation
+                    .getCurrentPosition((position) => this.success(position), () => this.disallowed = true);
+            },
+            success(position) {
+                this.coords = position.coords;
 
-  function error() {
-    coords.textContent = 'TRY AGAIN';
-  }
-
-  function getLocation() {
-    navigator.geolocation.getCurrentPosition(success, error);
-  }
-
-  if (!navigator.geolocation) {
-    coords.textContent = 'TRY DIFFERENT BROWSER';
-  } else {
-    coords.textContent = 'Locating…';
-    getLocation();
-  }
+            },
+            formatCoords(coord) {
+                return `${coord.dir} ${zeroPad(coord.deg, 2)}° ${zeroPad(coord.min, 2)}.${zeroPad(Math.round(coord.sec), 3)}'`
+            },
+        },
+        computed: {
+            coordsDisplay() {
+                if (this.unsupported) {
+                    return 'TRY DIFFERENT BROWSER';
+                } else if (this.disallowed) {
+                    return 'TRY AGAIN';
+                } else if (!this.coords) {
+                    return 'LOCATING YOU';
+                } else {
+                    const lat = ConvertDDToDMS(this.coords.latitude, false);
+                    const lng = ConvertDDToDMS(this.coords.longitude, true);
+                    // N 49° 58.551' E 019° 46.976'
+                    console.log(lat, lng);
+                    coords.textContent = `${this.formatCoords(lat)} ${this.formatCoords(lng)}`;
+                }
+            }
+        }
+    });
 </script>
 </body>
 </html>
