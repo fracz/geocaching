@@ -1,0 +1,27 @@
+version: '3'
+
+# copy .env.sample to .env and configure
+# launch the proxy https://github.com/evertramos/docker-compose-letsencrypt-nginx-proxy-companion
+# enjoy
+
+services:
+  site:
+    build: .
+    container_name: ${COMPOSE_PROJECT_NAME}
+    restart: always
+    environment:
+      - VIRTUAL_HOST=${DOMAIN}
+      - LETSENCRYPT_HOST=${DOMAIN}
+      - LETSENCRYPT_EMAIL=${EMAIL}
+    #    ports:
+    #      - "8080:80"
+    volumes:
+      - ../public:/var/www/html:ro
+    logging:
+      options:
+        max-size: 20m
+
+networks:
+  default:
+    external:
+      name: webproxy
