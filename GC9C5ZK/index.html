@@ -1,0 +1,180 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible"
+        content="ie=edge">
+  <title>Document</title>
+  <style>
+    #center {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      /* bring your own prefixes */
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    #coords {
+      font-family: monospace;
+      font-size: 40px;
+      font-weight: bold;
+    }
+
+    #loader {
+      display: inline-block;
+    }
+  </style>
+
+  <style>
+    [data-loader='satellite'] {
+      position: relative;
+
+      width: 48px;
+      height: 48px;
+
+      animation: satellite 3s infinite linear;
+
+      border: 1px solid #000;
+      border-radius: 100%;
+    }
+
+    [data-loader='satellite']:before,
+    [data-loader='satellite']:after {
+      position: absolute;
+      left: 0;
+
+      width: 15px;
+      height: 15px;
+
+      content: '';
+
+      border-radius: 100%;
+      background-color: #000;
+      -webkit-box-shadow: 0 0 10px #000;
+      box-shadow: 0 0 10px #000;
+    }
+
+    [data-loader='satellite']:after {
+      right: 0;
+
+      width: 24px;
+      height: 24px;
+      margin: 12px;
+    }
+
+    @-webkit-keyframes satellite {
+      from {
+        -webkit-transform: rotate(0) translateZ(0);
+        -ms-transform: rotate(0) translateZ(0);
+        -o-transform: rotate(0) translateZ(0);
+        transform: rotate(0) translateZ(0);
+      }
+      to {
+        -webkit-transform: rotate(360deg) translateZ(0);
+        -ms-transform: rotate(360deg) translateZ(0);
+        -o-transform: rotate(360deg) translateZ(0);
+        transform: rotate(360deg) translateZ(0);
+      }
+    }
+
+    @-moz-keyframes satellite {
+      from {
+        -webkit-transform: rotate(0) translateZ(0);
+        -ms-transform: rotate(0) translateZ(0);
+        -o-transform: rotate(0) translateZ(0);
+        transform: rotate(0) translateZ(0);
+      }
+      to {
+        -webkit-transform: rotate(360deg) translateZ(0);
+        -ms-transform: rotate(360deg) translateZ(0);
+        -o-transform: rotate(360deg) translateZ(0);
+        transform: rotate(360deg) translateZ(0);
+      }
+    }
+
+    @-o-keyframes satellite {
+      from {
+        -webkit-transform: rotate(0) translateZ(0);
+        -ms-transform: rotate(0) translateZ(0);
+        -o-transform: rotate(0) translateZ(0);
+        transform: rotate(0) translateZ(0);
+      }
+      to {
+        -webkit-transform: rotate(360deg) translateZ(0);
+        -ms-transform: rotate(360deg) translateZ(0);
+        -o-transform: rotate(360deg) translateZ(0);
+        transform: rotate(360deg) translateZ(0);
+      }
+    }
+
+    @keyframes satellite {
+      from {
+        -webkit-transform: rotate(0) translateZ(0);
+        -ms-transform: rotate(0) translateZ(0);
+        -o-transform: rotate(0) translateZ(0);
+        transform: rotate(0) translateZ(0);
+      }
+      to {
+        -webkit-transform: rotate(360deg) translateZ(0);
+        -ms-transform: rotate(360deg) translateZ(0);
+        -o-transform: rotate(360deg) translateZ(0);
+        transform: rotate(360deg) translateZ(0);
+      }
+    }
+  </style>
+</head>
+<body>
+<div id="center">
+  <div id="coords"></div>
+  <div class="hints"></div>
+  <div id="loader" data-loader="satellite"></div>
+</div>
+<script>
+  const coords = document.querySelector('#coords');
+  const zeroPad = (num, places) => String(num).padStart(places, '0')
+
+  function ConvertDDToDMS(D, lng) {
+    const M = 0 | (D % 1) * 60e7;
+
+    return {
+      dir: D < 0 ? lng ? 'W' : 'S' : lng ? 'E' : 'N',
+      deg: 0 | (D < 0 ? D = -D : D),
+      min: 0 | M / 1e7,
+      sec: (0 | M / 1e6 % 1 * 6e4) / 100
+    };
+  }
+
+  function formatCoords(coord) {
+    return `${coord.dir} ${zeroPad(coord.deg, 2)}° ${zeroPad(coord.min, 2)}.${zeroPad(Math.round(coord.sec), 3)}'`
+  }
+
+  function success(position) {
+    const coordinates = position.coords;
+    const lat = ConvertDDToDMS(coordinates.latitude, false);
+    const lng = ConvertDDToDMS(coordinates.longitude, true);
+    // N 49° 58.551' E 019° 46.976'
+    console.log(lat, lng);
+    coords.textContent = `${formatCoords(lat)} ${formatCoords(lng)}`;
+  }
+
+  function error() {
+    coords.textContent = 'TRY AGAIN';
+  }
+
+  function getLocation() {
+    navigator.geolocation.getCurrentPosition(success, error);
+  }
+
+  if (!navigator.geolocation) {
+    coords.textContent = 'TRY DIFFERENT BROWSER';
+  } else {
+    coords.textContent = 'Locating…';
+    getLocation();
+  }
+</script>
+</body>
+</html>
