@@ -1,6 +1,11 @@
 <?php
+
+require __DIR__ . '/vendor/autoload.php';
+
 $data = json_decode(file_get_contents('php://input'), true);
 $targetCoords = json_decode(file_get_contents(__DIR__ . '/coords.json'), true)['GC9C5ZK'];
+$throttle = new Stiphle\Throttle\LeakyBucket;
+$throttle->throttle($_SERVER['REMOTE_ADDR'], 1, 2000);
 
 if (is_array($data) && ($data['coords'] ?? false)) {
     $coords = $data['coords'];
