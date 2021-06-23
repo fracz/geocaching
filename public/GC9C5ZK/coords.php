@@ -1,6 +1,6 @@
 <?php
 $data = json_decode(file_get_contents('php://input'), true);
-$targetCoords = json_decode(file_get_contents(__DIR__ . '/coords.json'))['GC9C5ZK'];
+$targetCoords = json_decode(file_get_contents(__DIR__ . '/coords.json'), true)['GC9C5ZK'];
 
 if (is_array($data) && ($data['coords'] ?? false)) {
     $coords = $data['coords'];
