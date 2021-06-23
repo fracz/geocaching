@@ -15,6 +15,11 @@
             /* bring your own prefixes */
             transform: translate(-50%, -50%);
             text-align: center;
+            display: none;
+        }
+
+        #center.visible {
+            display: block;
         }
 
         #coords {
@@ -27,15 +32,14 @@
             display: inline-block;
         }
 
+        .hints {
+            padding: 15px 0;
+        }
+
         .hint {
             display: inline-block;
             text-align: center;
             width: 35px;
-        }
-
-        .hint-lat, .hint-lng {
-            display: inline-block;
-            padding: 15px 45px;
         }
 
         .dot {
@@ -44,6 +48,80 @@
             background-color: #FF4136;
             border-radius: 50%;
             display: inline-block;
+            transition: opacity .3s ease-in;
+            opacity: 1;
+        }
+
+        .hint:nth-child(1) .dot {
+            transition-delay: .1s;
+        }
+
+        .hint:nth-child(2) .dot {
+            transition-delay: .15s;
+        }
+
+        .hint:nth-child(3) .dot {
+            transition-delay: .2s;
+        }
+
+        .hint:nth-child(4) .dot {
+            transition-delay: .25s;
+        }
+
+        .hint:nth-child(5) .dot {
+            transition-delay: .3s;
+        }
+
+        .hint:nth-child(6) .dot {
+            transition-delay: .35s;
+        }
+
+        .hint:nth-child(7) .dot {
+            transition-delay: .4s;
+        }
+
+        .hint:nth-child(8) .dot {
+            transition-delay: .45s;
+        }
+
+        .hint:nth-child(9) .dot {
+            transition-delay: .5s;
+        }
+
+        .hint:nth-child(10) .dot {
+            transition-delay: .55s;
+        }
+
+        .hint:nth-child(11) .dot {
+            transition-delay: .6s;
+        }
+
+        .hint:nth-child(12) .dot {
+            transition-delay: .65s;
+        }
+
+        .hint:nth-child(13) .dot {
+            transition-delay: .7s;
+        }
+
+        .hint:nth-child(14) .dot {
+            transition-delay: .75s;
+        }
+
+        .hint:nth-child(15) .dot {
+            transition-delay: .8s;
+        }
+
+        .hint:nth-child(16) .dot {
+            transition-delay: .85s;
+        }
+
+        .hint:nth-child(17) .dot {
+            transition-delay: .9s;
+        }
+
+        .changing .dot {
+            opacity: 0;
         }
 
         .dot-green {
@@ -65,25 +143,28 @@
             position: relative;
             background-color: #7FDBFF;
         }
+
+        .simple img {
+        }
+
+        .simple.changing img {
+            transition: transform 1s linear;
+            transform: rotate(360deg);
+        }
+
     </style>
 </head>
 <body>
-<div id="center">
-    <div id="coords">{{ coordsDisplay }}</div>
-    <div class="hints">
-        <!-- @formatter:off -->
-        <div class="hint-lat">
-            <div class="hint" v-for="(hint, index) in hintsLat" :key="index">
-                <div :class="['dot', {'dot-green': hint === 1, 'dot-yellow': hint === 0}]"></div>
-            </div>
-        </div>
-        <div class="hint-lng">
-            <div class="hint" v-for="(hint, index) in hintsLng" :key="index">
-                <div :class="['dot', {'dot-green': hint === 1, 'dot-yellow': hint === 0}]"></div>
+<div id="center" :class="['visible']">
+    <div v-if="allowed">
+        <div id="coords">{{ coordsDisplay }}</div>
+        <div :class="['hints', {changing}]">
+            <div class="hint" v-for="(hint, index) in hints" :key="index">
+                <div :class="['dot', {'dot-green': hint === 'G', 'dot-yellow': hint === 'Y'}]"></div>
             </div>
         </div>
     </div>
-    <button type="button" class="simple">
+    <button type="button" :class="['simple', {changing}]" @click="check()" v-if="!unsupported">
         <img src="data:image/jpeg;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAArCAYAAAADgWq5AAADuElEQVRYR8WYTWgTURDHZxJjWqGK1ltL1kCPogUvfuBBEUHabFEoiuJBkJx7stnWQ0Dppl568CwUQcGCSDZVKaL0IAUvfhw8iKLZpWIRFalFGtvsky1u3Gzf7s6+7aY5JWTem9/89/9mXoKwSS9JHjkGwJ5Z6XVNRSoGOZC6ISUuk1MuIsJtZywVuuXA2VzhpIk4wyuMAt1S4Exf4QQm8YnfUwiCbhmw1K8cggTMUSzjB90S4G650JMEfE+BtWO8oGMHzp4e3m/WE6/DwPpBxwucz6ekhc4/IrBraxAv6OWxu871sQFnz4xK5qpZFYYFAMZw0qiMXYofuFhMSC9r9SiwXgMlFoUlWWFxwK65JOrGvPVRgTe8rUmy8goAev1Osyj0hg8OSVYsbyb4T4YxXSs1vgsLHQQrZAkqhJ08bHyQRUN7mAoQlFjkpharwm4gr0IpNojUh6WcMg8IXSIKuqHDwgopbC0SsYUN190/2pVM1Kd0rXQkTNF2bGgPiwJ7Ta6w0KLATwHgeIhkTNdUZ7urAcBW93pENlktl5ruDutiqEkzsmIYmpqx46m2cPpUZI0QsDNRvbbcOT8z8YNijUYvzo2cAmSPqOJEGs08VVjK3GvcH3/rp5hjcJiUOwsDNoeAh4O87uth6iN0KxdmyvEsI6QwFdYNx4AtGVqpQxpQ7gCD83424MEy0zxqTI8/91rHVZgKa226moTdnx+o321PE9Vd0jW1o3GAc8pHQMgG2YE7OMLA2gmzi+nU7GxxldZB8KGujfU7FbRzUiZfk8IisHZiSvtijN0zKqVzVh5cTLdXZ4vLjiJ/65q6LaiTNICjwFpJ2qC+/Z1245fnPshW9HJpa0ZWfiLADsrj58GvAUeFdSan3MqcMRQbOMFxI2G9iudBufIauqZKNtgeWfn67/1CVVP3OWMjA7thwlwhM7nhCcTEkPsc2HskzC29n6avvWnsyaAWyRIE5Zr+rLYS+xXobonuz/VaulP40Hl5j+fPINUlefiqro1fd1uKV4BQW/M7KH5nAhEOVsvqC6/WFVSslXfdpAs6hEGn+kA+n/rG+QPQb112YDhnsoTWKITBLb2iXnYqbq8PNZqDYO2Emb7CTkzCF10rtfkOgsHBpFTraUxIKza1stT24fFN64Lf1G59gXntiQobNKmavncAI4OpakU9yxvvztyk62UssB6VSbLSdH925xb6TRdKRUJwJndlCDE54Q7lCbW5wBwPW9C4K91enfx/MWoazQQB4gtxAVOs9xfuhuXy9rP9VAAAAABJRU5ErkJggg=="
              alt="">
     </button>
@@ -107,17 +188,19 @@
     var app = new Vue({
         el: '#center',
         data: {
-            hintsLat: [1, 1, 0, null, null, null, null],
-            hintsLng: [1, 1, 0, null, null, null, null],
-            coords: undefined,
+            hints: ["G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "G", "Y", "R", "R"],
+            coords: {latitude: 50, longitude: 19},
+            coordsToDisplay: {latitude: 50, longitude: 19},
             unsupported: false,
             disallowed: false,
+            allowed: false,
+            changing: false,
+            changeStart: undefined,
+            varyInterval: undefined,
         },
         mounted() {
             if (!navigator.geolocation) {
                 this.unsupported = true;
-            } else {
-                this.getLocation();
             }
         },
         methods: {
@@ -126,12 +209,53 @@
                     .getCurrentPosition((position) => this.success(position), () => this.disallowed = true);
             },
             success(position) {
+                this.allowed = true;
                 this.coords = position.coords;
-
+                this.fetchHints().then((hints) => {
+                    const elapsed = Date.now() - this.changeStart;
+                    setTimeout(() => this.displayNewHint(hints), Math.max(0, 1500 - elapsed));
+                });
             },
-            formatCoords(coord) {
-                return `${coord.dir} ${zeroPad(coord.deg, 2)}° ${zeroPad(coord.min, 2)}.${zeroPad(Math.round(coord.sec), 3)}'`
+            check() {
+                if (!this.changing) {
+                    this.changing = true;
+                    this.changeStart = Date.now();
+                    this.getLocation();
+                    this.varyInterval = setInterval(() => this.vary(), 50);
+                }
             },
+            vary() {
+                const coords = {
+                    latitude: this.coords.latitude,
+                    longitude: this.coords.longitude
+                };
+                coords.latitude += (Math.random() - .5) * .1;
+                coords.longitude += (Math.random() - .5) * .1;
+                this.coordsToDisplay = coords;
+            },
+            fetchHints() {
+                const coords = this.formatCoords(this.coords);
+                return fetch('coords.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({coords})
+                }).then((response) => response.json())
+                    .catch(() => this.unsupported = true);
+            },
+            displayNewHint(hints) {
+                this.hints = hints;
+                this.changing = false;
+                clearInterval(this.varyInterval);
+                this.coordsToDisplay = this.coords;
+            },
+            formatCoord(coord, lat = true) {
+                return `${coord.dir} ${zeroPad(coord.deg, lat ? 2 : 3)}° ${zeroPad(coord.min, 2)}.${zeroPad(Math.round(coord.sec), 3)}'`
+            },
+            formatCoords(coords) {
+                const lat = ConvertDDToDMS(coords.latitude, false);
+                const lng = ConvertDDToDMS(coords.longitude, true);
+                return `${this.formatCoord(lat)} ${this.formatCoord(lng, false)}`;
+            }
         },
         computed: {
             coordsDisplay() {
@@ -139,14 +263,8 @@
                     return 'TRY DIFFERENT BROWSER';
                 } else if (this.disallowed) {
                     return 'TRY AGAIN';
-                } else if (!this.coords) {
-                    return 'LOCATING YOU';
                 } else {
-                    const lat = ConvertDDToDMS(this.coords.latitude, false);
-                    const lng = ConvertDDToDMS(this.coords.longitude, true);
-                    // N 49° 58.551' E 019° 46.976'
-                    console.log(lat, lng);
-                    coords.textContent = `${this.formatCoords(lat)} ${this.formatCoords(lng)}`;
+                    return this.formatCoords(this.coordsToDisplay)
                 }
             }
         }
