@@ -1,7 +1,7 @@
 <?php
 $data = json_decode(file_get_contents('php://input'), true);
 $targetCoords = json_decode(file_get_contents(__DIR__ . '/coords.json'), true)['GC9C5ZK'];
-
+sleep(1);
 if (is_array($data) && ($data['coords'] ?? false)) {
     $coords = $data['coords'];
     if (preg_match('#^[NS] \d\d° \d\d\.\d\d\d\' [EW] \d\d\d° \d\d\.\d\d\d\'#', $coords)) {
