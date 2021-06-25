@@ -16,7 +16,7 @@ services:
     #    ports:
     #      - "8080:80"
     volumes:
-      - ../public:/var/www/html:ro
+      - ../:/var/www:ro
     logging:
       options:
         max-size: 20m
