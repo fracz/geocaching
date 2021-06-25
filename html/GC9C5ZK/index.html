@@ -153,6 +153,14 @@
         }
 
     </style>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1LVHDJX5VY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-1LVHDJX5VY');
+    </script>
 </head>
 <body>
 <div id="center" :class="['visible']">
@@ -210,6 +218,7 @@
                     this.changeStart = Date.now();
                     this.getLocation();
                     this.varyInterval = setInterval(() => this.vary(), 50);
+                    gtag('event', 'check');
                 }
             },
             vary() {
