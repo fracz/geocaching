@@ -171,18 +171,6 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
 <script>
-
-    function ConvertDDToDMS(D, lng) {
-        const M = 0 | (D % 1) * 60e7;
-
-        return {
-            dir: D < 0 ? lng ? 'W' : 'S' : lng ? 'E' : 'N',
-            deg: 0 | (D < 0 ? D = -D : D),
-            min: 0 | M / 1e7,
-            sec: (0 | M / 1e6 % 1 * 6e4) / 100
-        };
-    }
-
     const zeroPad = (num, places) => String(num).padStart(places, '0');
 
     var app = new Vue({
@@ -249,11 +237,19 @@
                 this.coordsToDisplay = this.coords;
             },
             formatCoord(coord, lat = true) {
-                return `${coord.dir} ${zeroPad(coord.deg, lat ? 2 : 3)}° ${zeroPad(coord.min, 2)}.${zeroPad(Math.round(coord.sec), 3)}'`
+                const dir = lat ? (coord.deg < 0 ? 'S' : 'N') : (coord.deg < 0 ? 'W' : 'E');
+                return `${dir} ${zeroPad(coord.deg, lat ? 2 : 3)}° ${zeroPad(coord.min, 2)}.${zeroPad(Math.round(coord.minDec), 3)}'`;
+            },
+            coordsDecToDdm(coord) {
+                return {
+                    deg: Math.floor(coord),
+                    min: Math.abs(Math.floor((coord % 1) * 60)),
+                    minDec: Math.abs(Math.round((((coord % 1) * 60) % 1) * 1000)),
+                };
             },
             formatCoords(coords) {
-                const lat = ConvertDDToDMS(coords.latitude, false);
-                const lng = ConvertDDToDMS(coords.longitude, true);
+                const lat = this.coordsDecToDdm(coords.latitude);
+                const lng = this.coordsDecToDdm(coords.longitude);
                 return `${this.formatCoord(lat)} ${this.formatCoord(lng, false)}`;
             }
         },
